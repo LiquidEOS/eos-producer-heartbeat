@@ -13,7 +13,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
 // eosio endpoint
-const endpoint = "http://localhost:8888";
+const endpoint = "http://127.0.0.1:8888";
 
 
 
@@ -44,7 +44,7 @@ class Index extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      noteTable: [] // to store the table rows from smart contract
+      hbTable: [] // to store the table rows from smart contract
     };
   }
 
@@ -70,7 +70,12 @@ class Index extends Component {
     const { classes } = this.props;
 
     // generate each note as a card
-    const generateCard = (key, timestamp, user, data) => (
+    const generateCard = (key, timestamp, user, data) => {
+      var cardData = JSON.parse(data);
+      if(!cardData.server_version)
+        return (<span/>);
+        
+      return  (
       <Card className={classes.card} key={key}>
         <CardContent>
           <Typography variant="headline" component="h2">
@@ -80,11 +85,21 @@ class Index extends Component {
             {new Date(timestamp*1000).toString()}
           </Typography>
           <Typography component="pre">
-            {data}
+            <table>
+              <tbody>
+                
+                  {Object.keys(cardData).map(key=>{
+                    return <tr><td>{key}:</td> <td>{cardData[key]}</td> </tr>
+                  })}
+                  
+                
+              </tbody>
+            </table>
+            
           </Typography>
         </CardContent>
       </Card>
-    );
+    )};
     let noteCards = hbTable.map((row, i) =>
       generateCard(i, row.timestamp, row.user, row.metadata_json));
     return (
@@ -92,7 +107,7 @@ class Index extends Component {
         <AppBar position="static" color="default">
           <Toolbar>
             <Typography variant="title" color="inherit">
-              Heartbeat
+              BP Heartbeat Viewer
             </Typography>
           </Toolbar>
         </AppBar>
