@@ -209,7 +209,7 @@ If you are more familiar with docker, you could use the docker commands below to
 
 **Execute below command in `/eosio_docker`:**
 
-Run container from eosio/eos-dev image by mounting contracts / scripts to the container with running the init_blockchain.sh script as the process.
+Build and run container eosio-with-hbplugin image by mounting contracts / scripts to the container with running the init_blockchain.sh script as the process.
 The init_blockchain.sh script run the local node of the blockchain and initializes wallets / contract / data.
 ```sh
 docker run --rm --name eosio_heartbeat_container \
@@ -217,7 +217,7 @@ docker run --rm --name eosio_heartbeat_container \
 --mount type=bind,src="$(pwd)"/contracts,dst=/opt/eosio/bin/contracts \
 --mount type=bind,src="$(pwd)"/scripts,dst=/opt/eosio/bin/scripts \
 --mount type=bind,src="$(pwd)"/data,dst=/mnt/dev/data \
--w "/opt/eosio/bin/" eosio/eos-dev:v1.1.0 /bin/bash -c "./scripts/init_blockchain.sh"
+-w "/opt/eosio/bin/" eosio-with-hbplugin /bin/bash -c "./scripts/init_blockchain.sh"
 ```
 
 Output and follow docker console logs:
