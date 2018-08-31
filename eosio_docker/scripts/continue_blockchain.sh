@@ -21,6 +21,7 @@ nodeos -e -p eosio -d /mnt/dev/data \
   --plugin eosio::chain_api_plugin \
   --plugin eosio::history_api_plugin \
   --plugin eosio::http_plugin \
+  --plugin eosio::producer_heartbeat_plugin \
   --http-server-address=0.0.0.0:8888 \
   --access-control-allow-origin=* \
   --contracts-console \

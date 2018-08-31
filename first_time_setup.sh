@@ -26,7 +26,7 @@ docker pull eosio/eos-dev:v1.2.2
 # force remove the perivous container if any
 # create a clean data folder in eosio_docker to preserve block data
 echo "=== setup/reset data for eosio_docker ==="
-docker stop eosio_notechain_container || true && docker rm --force eosio_notechain_container || true
+docker stop eosio_heartbeat_container || true && docker rm --force eosio_heartbeat_container || true
 rm -rf "./eosio_docker/data"
 mkdir -p "./eosio_docker/data"
 

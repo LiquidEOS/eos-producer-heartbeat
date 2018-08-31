@@ -14,6 +14,7 @@ nodeos -e -p eosio -d /mnt/dev/data \
   --config-dir /mnt/dev/config \
   --http-validate-host=false \
   --plugin eosio::producer_plugin \
+  --plugin eosio::producer_heartbeat_plugin \
   --plugin eosio::history_plugin \
   --plugin eosio::chain_api_plugin \
   --plugin eosio::history_api_plugin \
@@ -35,27 +36,25 @@ echo "=== setup wallet: eosiomain ==="
 cleos wallet create -n eosiomain --to-console | tail -1 | sed -e 's/^"//' -e 's/"$//' > eosiomain_wallet_password.txt
 cleos wallet import -n eosiomain --private-key 5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
 
-echo "=== setup wallet: notechainwal ==="
+echo "=== setup wallet: heartbeatwal ==="
 # key for eosio account and export the generated password to a file for unlocking wallet later
-cleos wallet create -n notechainwal --to-console | tail -1 | sed -e 's/^"//' -e 's/"$//' > notechain_wallet_password.txt
-# Owner key for notechainwal wallet
-cleos wallet import -n notechainwal --private-key 5JpWT4ehouB2FF9aCfdfnZ5AwbQbTtHBAwebRXt94FmjyhXwL4K
-# Active key for notechainwal wallet
-cleos wallet import -n notechainwal --private-key 5JD9AGTuTeD5BXZwGQ5AtwBqHK21aHmYnTetHgk1B3pjj7krT8N
+cleos wallet create -n heartbeatwal --to-console | tail -1 | sed -e 's/^"//' -e 's/"$//' > heartbeat_wallet_password.txt
+# Owner key for heartbeatwal wallet
+cleos wallet import -n heartbeatwal --private-key 5JpWT4ehouB2FF9aCfdfnZ5AwbQbTtHBAwebRXt94FmjyhXwL4K
+# Active key for heartbeatwal wallet
+cleos wallet import -n heartbeatwal --private-key 5JD9AGTuTeD5BXZwGQ5AtwBqHK21aHmYnTetHgk1B3pjj7krT8N
 
-# * Replace "notechainwal" by your own wallet name when you start your own project
+# create account for heartbeatacc with above wallet's public keys
+cleos create account eosio heartbeatacc EOS6PUh9rs7eddJNzqgqDx1QrspSHLRxLMcRdwHZZRL4tpbtvia5B EOS8BCgapgYA2L4LJfCzekzeSr3rzgSTUXRXwNi8bNRoz31D14en9
 
-# create account for notechainacc with above wallet's public keys
-cleos create account eosio notechainacc EOS6PUh9rs7eddJNzqgqDx1QrspSHLRxLMcRdwHZZRL4tpbtvia5B EOS8BCgapgYA2L4LJfCzekzeSr3rzgSTUXRXwNi8bNRoz31D14en9
 
-# * Replace "notechainacc" by your own account name when you start your own project
 
 echo "=== deploy smart contract ==="
 # $1 smart contract name
 # $2 account holder name of the smart contract
 # $3 wallet for unlock the account
 # $4 password for unlocking the wallet
-deploy_contract.sh notechain notechainacc notechainwal $(cat notechain_wallet_password.txt)
+deploy_contract.sh heartbeat heartbeatacc heartbeatwal $(cat heartbeat_wallet_password.txt)
 
 echo "=== create user accounts ==="
 # script for create data into blockchain
