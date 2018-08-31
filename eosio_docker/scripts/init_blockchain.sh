@@ -22,6 +22,9 @@ nodeos -e -p eosio -d /mnt/dev/data \
   --http-server-address=0.0.0.0:8888 \
   --access-control-allow-origin=* \
   --contracts-console \
+  --heartbeat-signature-provider EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV:Key=5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3 \
+  --heartbeat-period 30 \
+  --heartbeat-contract heartbeatacc \
   --verbose-http-errors &
 sleep 1s
   until curl localhost:8888/v1/chain/get_info
