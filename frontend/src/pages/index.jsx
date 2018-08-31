@@ -11,16 +11,28 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+
+import { Responsive, WidthProvider } from "react-grid-layout";
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 // eosio endpoint
-const endpoint = "http://127.0.0.1:8888";
+var debug = true;
+var endpoint = "http://127.0.0.1:8888";
+if(debug)
+  endpoint = "http://54.186.222.85:8888";
 
-
+const theme = createMuiTheme({
+  palette: {
+    type: 'dark',
+  },
+});
 
 // set up styling classes using material-ui "withStyles"
 const styles = theme => ({
   card: {
-    margin: 20,
+    margin: 5,
+    maxWidth: "600px"
   },
   paper: {
     ...theme.mixins.gutters(),
@@ -32,8 +44,8 @@ const styles = theme => ({
     width: "100%",
   },
   pre: {
-    background: "#ccc",
-    padding: 10,
+    background: "#eee",
+    padding: 4,
     marginBottom: 0.
   },
 });
@@ -48,9 +60,39 @@ class Index extends Component {
     };
   }
 
-  
+  generateLayout(cards) {
+    return cards.map(function(item, i) {
+      const y = 4;
+      return {
+        x: (i * 2) % 12,
+        y: Math.floor(i / 6) * y,
+        w: 2,
+        h: y,
+        i: i.toString()
+      };
+    });
+  }
+
   
   getTable() {
+    if(debug){
+      var testData = [
+        {"user":"eosliquideos","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797,\"test1\":1,\"test1a\":1,\"test1b\":1,\"test1c\":1,\"test1\":2,\"test3\":1,\"test1\":4}","timestamp":1535710409},
+        {"user":"starteosiobp","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797}","timestamp":1535710409},
+        {"user":"eos42freedom","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797}","timestamp":1535710409},
+        {"user":"eosnewyorkio","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797,\"test1\":1,\"test1\":2,\"test3\":1,\"test1\":4}","timestamp":1535710409},
+        {"user":"eosfishrocks","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797}","timestamp":1535710409},
+        {"user":"zbeosbp11111","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797}","timestamp":1535710409},
+        {"user":"eoshuobipool","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797}","timestamp":1535710409},
+        {"user":"jedaaaaaaaaa","metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797}","timestamp":1535710409},
+      ];
+      for (var i = 0; i < 50; i++) {
+        testData.push({"user":"eostestbp" + i,"metadata_json":"{\"server_version\":\"a228b1dc\",\"actor_blacklist_hash\":\"00000000\",\"head_block_num\":23797}","timestamp":1535710409});
+      }
+      this.setState({ hbTable:testData
+      });
+      return;
+    }
     const rpc = new Rpc.JsonRpc(endpoint);
     rpc.get_table_rows({
       "json": true,
@@ -66,53 +108,95 @@ class Index extends Component {
   }
 
   render() {
-    const { hbTable } = this.state;
+    let { hbTable } = this.state;
     const { classes } = this.props;
 
     // generate each note as a card
     const generateCard = (key, timestamp, user, data) => {
       var cardData = JSON.parse(data);
+      let minH = Math.floor(Object.keys(cardData).length / 2) + 2;
       if(!cardData.server_version)
         return (<span/>);
         
       return  (
-      <Card className={classes.card} key={key}>
-        <CardContent>
-          <Typography variant="headline" component="h2">
+      <Card className={classes.card} key={key} data-grid={{ w: 2, h: minH, x: (key * 2) % 6, y: Math.floor(key / 3)}}>
+        <CardContent  style={{padding:5}}>
+          <Typography variant="headline" style={{fontSize:18, color: "#ddf" }} component="h2">
             {user}
           </Typography>
-          <Typography style={{fontSize:12}} color="textSecondary" gutterBottom>
+          <Typography style={{fontSize:7}} color="default" gutterBottom>
             {new Date(timestamp*1000).toString()}
           </Typography>
-          <Typography component="pre">
+          
             <table>
               <tbody>
                 
                   {Object.keys(cardData).map(key=>{
-                    return <tr><td>{key}:</td> <td>{cardData[key]}</td> </tr>
+                    return <tr><td>
+                    <Typography style={{fontSize:10}}  color="textSecondary" component="pre">
+                    {key}:
+                    </Typography>
+                    </td> <td>
+                    <Typography style={{fontSize:10}}  color="textPrimary" component="pre">
+                    {cardData[key]}
+                    </Typography>
+                    </td> </tr>
                   })}
                   
                 
               </tbody>
             </table>
             
-          </Typography>
+          
         </CardContent>
       </Card>
     )};
-    let noteCards = hbTable.map((row, i) =>
+    
+    // if(debug && hbTable.length){
+    //   var temp = [];
+    //   for (var i = 0; i < 100; i++) {
+    //     temp.push(hbTable[0]);
+    //   }
+    //   hbTable = temp;
+    // }    
+    let cards = hbTable.map((row, i) =>
       generateCard(i, row.timestamp, row.user, row.metadata_json));
+    
+
+    
     return (
-      <div>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography variant="title" color="inherit">
-              BP Heartbeat Viewer
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        {noteCards}
-      </div>
+      <MuiThemeProvider theme={theme}>
+        <div style={{background: "#0f0f0f", height: "100%", width: "100%"}}>
+          <AppBar position="static" style={{background: "#000"}} >
+            <Toolbar>
+              <div style={{"display": "flex", "alignItems":"center"}} >
+                <img src="eos-logo.png" width="32" height="32"/> 
+                <img src="heartbeat.png" width="32" height="32"/>
+                <Typography variant="title" color="inherit">
+                  <div style={{"marginLeft":"15px"}}> BP Heartbeat Viewer </div>
+                </Typography>
+              </div>
+            </Toolbar>
+          </AppBar>
+         <ResponsiveReactGridLayout
+          className="layout"
+          items={cards.length}
+          rowHeight={25}
+          // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          // WidthProvider option
+          isDraggable={false}
+          isResizable={false}
+          layouts={{}}
+          // measureBeforeMount={false}
+          // useCSSTransforms={true}
+          compactType={'vertical'}
+          preventCollision={true}
+        >
+          {cards}
+        </ResponsiveReactGridLayout>
+          
+        </div>
+      </MuiThemeProvider>
     );
   }
 
