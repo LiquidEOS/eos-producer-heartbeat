@@ -38,7 +38,7 @@ class heartbeat_contract : public eosio::contract {
     using contract::contract;
 
     /// @abi action
-    void hearbeat( account_name _user, std::string& _metadata_json ) {
+    void heartbeat( account_name _user, std::string& _metadata_json ) {
       // to sign the action with the given account
       require_auth( _user );
 
@@ -64,4 +64,4 @@ class heartbeat_contract : public eosio::contract {
 
 };
 
-EOSIO_ABI( heartbeat_contract, (hearbeat) )
+EOSIO_ABI( heartbeat_contract, (heartbeat) )
