@@ -2,7 +2,7 @@
 #include <eosiolib/print.hpp>
 using namespace eosio;
 
-// Smart Contract Name: hearbeat
+// Smart Contract Name: heartbeat_contract
 // Table struct:
 //   notestruct: multi index table to store the heartbeat data
 //     user(account_name/uint64): account name for the bp
@@ -13,7 +13,7 @@ using namespace eosio;
 // Public actions:
 //   heartbeat => put the metadata into the multi-index table and sign by the given account
 
-class hearbeat : public eosio::contract {
+class heartbeat_contract : public eosio::contract {
   private:
     bool isnewuser( account_name user ) {
       hbtable hbobj(_self, _self);
@@ -32,13 +32,13 @@ class hearbeat : public eosio::contract {
       account_name primary_key() const { return user; }
     };
 
-    typedef eosio::multi_index< N(notestruct), notestruct> hbtable;
+    typedef eosio::multi_index< N(hbstruct), hbstruct> hbtable;
 
   public:
     using contract::contract;
 
     /// @abi action
-    void hearbeat( account_name _user, std::string& _metedata_json ) {
+    void hearbeat( account_name _user, std::string& _metadata_json ) {
       // to sign the action with the given account
       require_auth( _user );
 
@@ -56,7 +56,7 @@ class hearbeat : public eosio::contract {
         auto &hb = obj.get(_user);
         // update object
         obj.modify( hb, _user, [&]( auto& address ) {
-          address.note        = _note;
+          address.metadata_json        = _metadata_json;
           address.timestamp   = now();
         });
       }
@@ -64,5 +64,4 @@ class hearbeat : public eosio::contract {
 
 };
 
-// specify the contract name, and export a public action: update
-EOSIO_ABI( hearbeat, (hearbeat) )
+EOSIO_ABI( heartbeat_contract, (hearbeat) )
