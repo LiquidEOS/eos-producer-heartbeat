@@ -17,10 +17,8 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 // eosio endpoint
-var debug = true;
+var debug = false;
 var endpoint = "http://127.0.0.1:8888";
-if(debug)
-  endpoint = "http://54.186.222.85:8888";
 
 const theme = createMuiTheme({
   palette: {
