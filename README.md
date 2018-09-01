@@ -1,6 +1,10 @@
 # Overview
 Frontend and contract for the bp heartbeat plugin
 
+Monitor: http://heartbeat.liquideos.com/
+
+Plugin Repository: https://github.com/bancorprotocol/eos-producer-heartbeat-plugin
+
 # Prerequisites
 
 Make sure Docker and Node.js are installed
