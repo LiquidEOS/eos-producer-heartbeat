@@ -18,7 +18,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 // eosio endpoint
 var debug = false;
-var endpoint = "http://node2.liquideos.com:8888";
+var endpoint = "http://api.eosrio.io";
 if(debug)
   endpoint = "http://127.0.0.1:8888";
 
