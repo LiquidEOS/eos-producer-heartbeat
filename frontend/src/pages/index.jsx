@@ -18,7 +18,9 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 // eosio endpoint
 var debug = false;
-var endpoint = "http://127.0.0.1:8888";
+var endpoint = "http://node2.liquideos.com:8888";
+if(debug)
+  endpoint = "http://127.0.0.1:8888";
 
 const theme = createMuiTheme({
   palette: {
@@ -94,8 +96,8 @@ class Index extends Component {
     const rpc = new Rpc.JsonRpc(endpoint);
     rpc.get_table_rows({
       "json": true,
-      "code": "heartbeatacc",   // contract who owns the table
-      "scope": "heartbeatacc",  // scope of the table
+      "code": "eosheartbeat",   // contract who owns the table
+      "scope": "eosheartbeat",  // scope of the table
       "table": "hbstruct",    // name of the table as specified by the contract abi
       "limit": 100,
     }).then(result => this.setState({ hbTable: result.rows }));
