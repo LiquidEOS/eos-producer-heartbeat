@@ -18,9 +18,18 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 // eosio endpoint
 var debug = false;
-var endpoint = "http://api.eosrio.io";
+var endpoint = "http://127.0.0.1:8888";
 if(debug)
   endpoint = "http://127.0.0.1:8888";
+
+if(window.location.host ==  "heartbeat.liquideos.com"){
+  endpoint = "http://api.eosrio.io";
+}
+
+if(window.location.host ==  "jungle-heartbeat.liquideos.com"){
+  endpoint = "http://dev.cryptolions.io:38888";
+}
+
 
 const theme = createMuiTheme({
   palette: {
@@ -115,7 +124,7 @@ class Index extends Component {
     const generateCard = (key, timestamp, user, data) => {
       var cardData = JSON.parse(data);
       let minH = Math.floor(Object.keys(cardData).length / 2) + 2;
-      if(!cardData.server_version)
+      if(!cardData.version)
         return (<span/>);
         
       return  (
@@ -178,6 +187,9 @@ class Index extends Component {
               </div>
             </Toolbar>
           </AppBar>
+          <Typography variant="title" color="inherit" style={{fontSize:9, color: "#fff", "marginLeft":"5px" }}>
+            The following information is collected through the <a style={{fontSize:9, color: "#faa" }} href="https://github.com/bancorprotocol/eos-producer-heartbeat-plugin">nodeos bp heartbeat plugin</a>. The data shown here is provided voluntarily by each BP and is <b>not validated</b> by LiquidEOS nor anyone in any way. 
+          </Typography>
          <ResponsiveReactGridLayout
           className="layout"
           items={cards.length}
