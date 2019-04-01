@@ -113,9 +113,8 @@ class Index extends Component {
       "code": "eosheartbeat",   // contract who owns the table
       "scope": "eosheartbeat",  // scope of the table
       "table": "hbstruct",    // name of the table as specified by the contract abi
-      "limit": 444
+      "limit": 4444
     }).then(result =>{
-      console.log(result.rows)
       this.setState({ hbTable: result.rows })
     });
   }
