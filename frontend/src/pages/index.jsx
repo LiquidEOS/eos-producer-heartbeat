@@ -14,6 +14,7 @@ import Button from '@material-ui/core/Button';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import { Responsive, WidthProvider } from "react-grid-layout";
+import './index.css'
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 // eosio endpoint
@@ -69,6 +70,10 @@ class Index extends Component {
     };
   }
 
+  componentDidMount() {
+    this.getTable();
+  }
+
   generateLayout(cards) {
     return cards.map(function(item, i) {
       const y = 4;
@@ -108,12 +113,11 @@ class Index extends Component {
       "code": "eosheartbeat",   // contract who owns the table
       "scope": "eosheartbeat",  // scope of the table
       "table": "hbstruct",    // name of the table as specified by the contract abi
-      "limit": 100,
-    }).then(result => this.setState({ hbTable: result.rows }));
-  }
-
-  componentDidMount() {
-    this.getTable();
+      "limit": 444
+    }).then(result =>{
+      console.log(result.rows)
+      this.setState({ hbTable: result.rows })
+    });
   }
 
   render() {
@@ -122,7 +126,13 @@ class Index extends Component {
 
     // generate each note as a card
     const generateCard = (key, timestamp, user, data) => {
-      var cardData = JSON.parse(data);
+      let cardData
+      try {
+        cardData = JSON.parse(data);
+      } catch (error) {
+        console.log(error)
+        return false
+      }
       let minH = Math.floor(Object.keys(cardData).length / 2) + 2;
       if(!cardData.version)
         return (<span/>);
@@ -141,15 +151,27 @@ class Index extends Component {
               <tbody>
                 
                   {Object.keys(cardData).map(key=>{
-                    return <tr><td>
-                    <Typography style={{fontSize:10}}  color="textSecondary" component="pre">
-                    {key}:
-                    </Typography>
-                    </td> <td>
-                    <Typography style={{fontSize:10}}  color="textPrimary" component="pre">
-                    {cardData[key]}
-                    </Typography>
-                    </td> </tr>
+                    let item;
+                    if(typeof(cardData[key]) === 'object'){
+                      item = Object.keys(cardData[key]).map(i => {
+                        return `${i}: ${cardData[key][i]} `
+                      })
+                    } else {
+                      item = cardData[key]
+                    }
+                    return (
+                      <tr>
+                        <td>
+                          <Typography style={{fontSize:10}}  color="textSecondary" component="pre">
+                          {key}:
+                          </Typography>
+                          </td> <td>
+                          <Typography style={{fontSize:10}}  color="textPrimary" component="pre">
+                          {item}
+                          </Typography>
+                        </td> 
+                      </tr>
+                    )
                   })}
                   
                 
@@ -167,12 +189,19 @@ class Index extends Component {
     //     temp.push(hbTable[0]);
     //   }
     //   hbTable = temp;
-    // }    
+    // } 
+    hbTable = hbTable.filter(i => {
+      try {
+        JSON.parse(i.metadata_json)
+        return true
+      } catch (error) {
+        console.log(error)
+        return false
+      }
+    })
     let cards = hbTable.map((row, i) =>
       generateCard(i, row.timestamp, row.user, row.metadata_json));
-    
 
-    
     return (
       <MuiThemeProvider theme={theme}>
         <div style={{background: "#0f0f0f", height: "100%", width: "100%"}}>
