@@ -70,7 +70,7 @@ class Index extends Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.getTable();
   }
 
