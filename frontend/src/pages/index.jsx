@@ -14,7 +14,6 @@ import Button from '@material-ui/core/Button';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import { Responsive, WidthProvider } from "react-grid-layout";
-import './index.css'
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 // eosio endpoint
@@ -151,11 +150,8 @@ class Index extends Component {
                 
                   {Object.keys(cardData).map(key=>{
                     let item;
-                    if(typeof(cardData[key]) === 'object'){
-                      item = Object.keys(cardData[key]).map(i => {
-                        return `${i}: ${cardData[key][i]} `
-                      })
-                    } else {
+                    if(key === 'latencies') return false
+                    if(typeof(cardData[key]) !== 'object'){
                       item = cardData[key]
                     }
                     return (
